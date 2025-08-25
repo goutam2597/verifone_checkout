@@ -1,4 +1,4 @@
-name: verifone2_checkout_flutter
+name: verifone_checkout
 description: Verifone 2Checkout hosted checkout (WebView + deep link) with environment config
 version: 0.1.0
 publish_to: 'none'
