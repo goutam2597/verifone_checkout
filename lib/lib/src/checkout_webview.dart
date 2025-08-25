@@ -3,10 +3,10 @@ import 'package:webview_flutter/webview_flutter.dart';
 
 typedef ReturnHandler = void Function(Uri uri);
 
-/// Loads [checkoutUrl] and intercepts [returnUrl] (custom scheme or https).
+/// Opens [checkoutUrl] and intercepts [returnUrl] (custom scheme or https).
 class CheckoutWebView extends StatefulWidget {
   final String checkoutUrl;
-  final String returnUrl;     // e.g. myapp://payment-return or https://yourapp.com/return
+  final String returnUrl;   // e.g. myapp://payment-return or https://yourapp.com/return
   final ReturnHandler onReturn;
   final String? appBarTitle;
 
@@ -41,11 +41,10 @@ class _CheckoutWebViewState extends State<CheckoutWebView> {
           onPageFinished: (_) => setState(() => _loading = false),
           onNavigationRequest: (req) {
             final uri = Uri.tryParse(req.url);
-            // Debug: print(req.url);
             if (uri != null && _isReturnUrl(uri)) {
               widget.onReturn(uri);
-              if (mounted) Navigator.of(context).pop();
-              return NavigationDecision.prevent;
+              if (mounted) Navigator.of(context).pop();     // close WebView
+              return NavigationDecision.prevent;             // stop loading deeplink
             }
             return NavigationDecision.navigate;
           },
@@ -55,14 +54,14 @@ class _CheckoutWebViewState extends State<CheckoutWebView> {
   }
 
   bool _isReturnUrl(Uri u) {
-    // custom scheme match
-    final customMatch = (u.scheme == _target.scheme) && (u.host == _target.host);
-    // https fallback exact host+path
-    final httpsMatch  = (u.scheme == 'https' && _target.scheme == 'https' &&
-        u.host == _target.host && u.path == _target.path);
-    // lenient prefix
-    final prefix      = u.toString().startsWith(widget.returnUrl);
-    return customMatch || httpsMatch || prefix;
+    // exact custom-scheme match: myapp://payment-return
+    final custom = (u.scheme == _target.scheme) && (u.host == _target.host);
+    // https fallback: https://yourapp.com/return
+    final https  = (u.scheme == 'https' && _target.scheme == 'https'
+        && u.host == _target.host && u.path == _target.path);
+    // lenient prefix (handles providers adding params)
+    final prefix = u.toString().startsWith(widget.returnUrl);
+    return custom || https || prefix;
   }
 
   @override

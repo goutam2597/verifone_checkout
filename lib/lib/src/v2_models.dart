@@ -1,15 +1,10 @@
-/// Result of a Verifone 2Checkout hosted checkout flow.
-class V2PaymentResult {
-  /// Your order reference or merchant reference (if you pass one around).
-  final String reference;
+/// Result from the hosted checkout flow.
+class V2HostedResult {
+  final String reference;         // your own order ref (optional)
+  final String status;            // SUCCESS | PENDING | FAILED | CANCELED
+  final Map<String, dynamic> raw; // return params / uri etc.
 
-  /// Simplified status label (SUCCESS / PENDING / FAILED / CANCELED).
-  final String status;
-
-  /// Raw payloads captured during the flow (e.g., return URI, server verify).
-  final Map<String, dynamic> raw;
-
-  const V2PaymentResult({
+  const V2HostedResult({
     required this.reference,
     required this.status,
     required this.raw,
@@ -18,11 +13,11 @@ class V2PaymentResult {
   bool get isSuccess => status.toUpperCase() == 'SUCCESS';
 }
 
-/// Exception thrown by Verifone 2Checkout wrapper.
-class V2CheckoutException implements Exception {
+/// Simple exception type.
+class V2HostedException implements Exception {
   final String message;
   final Object? cause;
-  V2CheckoutException(this.message, [this.cause]);
+  V2HostedException(this.message, [this.cause]);
   @override
-  String toString() => 'V2CheckoutException: $message';
+  String toString() => 'V2HostedException: $message';
 }
