@@ -41,10 +41,11 @@ class _CheckoutWebViewState extends State<CheckoutWebView> {
           onPageFinished: (_) => setState(() => _loading = false),
           onNavigationRequest: (req) {
             final uri = Uri.tryParse(req.url);
+            // print('[V2 NAV] ${req.url}');
             if (uri != null && _isReturnUrl(uri)) {
               widget.onReturn(uri);
-              if (mounted) Navigator.of(context).pop();     // close WebView
-              return NavigationDecision.prevent;             // stop loading deeplink
+              if (mounted) Navigator.of(context).pop(); // close WebView
+              return NavigationDecision.prevent;        // stop WebView from loading deeplink
             }
             return NavigationDecision.navigate;
           },
@@ -54,12 +55,9 @@ class _CheckoutWebViewState extends State<CheckoutWebView> {
   }
 
   bool _isReturnUrl(Uri u) {
-    // exact custom-scheme match: myapp://payment-return
     final custom = (u.scheme == _target.scheme) && (u.host == _target.host);
-    // https fallback: https://yourapp.com/return
     final https  = (u.scheme == 'https' && _target.scheme == 'https'
         && u.host == _target.host && u.path == _target.path);
-    // lenient prefix (handles providers adding params)
     final prefix = u.toString().startsWith(widget.returnUrl);
     return custom || https || prefix;
   }
@@ -67,7 +65,7 @@ class _CheckoutWebViewState extends State<CheckoutWebView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.appBarTitle ?? 'Checkout')),
+      appBar: AppBar(title: Text(widget.appBarTitle ?? '2Checkout')),
       body: Stack(
         children: [
           WebViewWidget(controller: _controller),

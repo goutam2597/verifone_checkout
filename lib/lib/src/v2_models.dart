@@ -1,8 +1,8 @@
 /// Result from the hosted checkout flow.
 class V2HostedResult {
-  final String reference;         // your own order ref (optional)
+  final String reference;         // your order ref (optional)
   final String status;            // SUCCESS | PENDING | FAILED | CANCELED
-  final Map<String, dynamic> raw; // return params / uri etc.
+  final Map<String, dynamic> raw; // return params / uri, etc.
 
   const V2HostedResult({
     required this.reference,
@@ -13,7 +13,6 @@ class V2HostedResult {
   bool get isSuccess => status.toUpperCase() == 'SUCCESS';
 }
 
-/// Simple exception type.
 class V2HostedException implements Exception {
   final String message;
   final Object? cause;

@@ -2,16 +2,13 @@ import 'package:flutter/material.dart';
 import 'checkout_webview.dart';
 import 'v2_models.dart';
 
-/// Client-only Verifone 2Checkout hosted checkout helper.
-/// You must supply a hosted **checkoutUrl** (ConvertPlus / Buy-Link)
-/// that you created in the 2Checkout dashboard (no secrets in app).
+/// Open a Verifone 2Checkout hosted buy-link / ConvertPlus URL with no secrets.
 class V2HostedCheckout {
-  /// Open a hosted checkout URL and intercept [returnUrl].
   static Future<V2HostedResult> open({
     required BuildContext context,
-    required String checkoutUrl,
-    required String returnUrl, // myapp://payment-return (recommended) or https://...
-    String? reference,         // your order id to echo in the result
+    required String checkoutUrl,  // Hosted URL from your dashboard or V2BuyLink.build()
+    required String returnUrl,    // myapp://payment-return (recommended) or https://...
+    String? reference,            // your order id to echo back
     String? appBarTitle,
   }) async {
     Uri? returned;
